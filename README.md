@@ -4,8 +4,8 @@
  
  
  ### ->Testing Code
-  ##### * -> transmitter testing code
-  ##### -> reciever testing code
+  ##### - -> transmitter testing code
+  - ##### -> reciever testing code
   ##### -> encoder testing code
  
  
