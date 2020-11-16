@@ -25,6 +25,7 @@ long int tailDelay1=2000;
 //long int tailDelay2=2000;
 int encoderPin0   =  29;
 int offset=0;
+int turningDiff=0.5;
 
 void setup() {
  // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
@@ -84,6 +85,12 @@ void loop() {
       power = myStr - '0' ; // This line
      
     timer1 = millis();
+
+    //turnDiff
+    if (turnVal!=5){
+      turningDiff = map((turnVal%5), 1,4,0.5,0.1);
+    }
+    
     if ((millis()-tailTimer1)%4000>tailDelay1){
       motor_Pwm = map(power, 0,9,0,255);
     }
@@ -102,7 +109,7 @@ void loop() {
       Serial.println("Turning Left");
       if ((abs(encoderVal-offset)>=206) and (abs(encoderVal-offset)<=306)){
         if ((millis()-tailTimer1)%4000<tailDelay1){
-            motor_Pwm = map(power, 0,9,0,255)*0.5;
+            motor_Pwm = map(power, 0,9,0,255)*turningDiff;
         }
         else{
           motor_Pwm = map(power, 0,9,0,255);
@@ -121,7 +128,7 @@ void loop() {
       Serial.println("Turning Right");
       if ((abs(encoderVal-offset)>=718) and (abs(encoderVal-offset)<=818)){
         if ((millis()-tailTimer1)%4000<tailDelay1){
-            motor_Pwm = map(power, 0,9,0,255)*0.5;
+            motor_Pwm = map(power, 0,9,0,255)*turningDiff;
         }
         else{
           motor_Pwm = map(power, 0,9,0,255);
