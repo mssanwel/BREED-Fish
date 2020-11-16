@@ -1,6 +1,8 @@
+#include <Adafruit_SSD1331.h>
+
 /*Fish remote controller
- * Complete on 25/01/2019 Version 4.0
-By Shen Zhong
+   Complete on 25/01/2019 Version 4.0
+  By Shen Zhong
 */
 
 #include <Adafruit_SSD1306.h>
@@ -52,14 +54,14 @@ int yaxis   = 0;
 int resistor = 0;
 int button1  = 0; //max button
 int button2  = 0; //stop button
-int button3  = 0; 
+int button3  = 0;
 int button4  = 0;
 
 char inComingbyte[8];
 char sendData[8];
 int controllerState   = 0;
 long lastReciveTime   = 0;
-int dutyCycleLimit     = 0;   
+int dutyCycleLimit     = 0;
 int sendSpeed         = 0;
 int userDutyCycle     = 0;
 char sendTurn          = 0;
@@ -76,7 +78,7 @@ unsigned int left_count  = 0;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(19200,SERIAL_8O1);
+  Serial.begin(19200, SERIAL_8O1);
   //Serial.setTimeout(200);
   pinMode( 5, INPUT); //b1
   pinMode( 4, INPUT); //b2
@@ -95,49 +97,54 @@ void loop() {
   Serial.println(analogRead(A7));
   //Serial.println(inComingbyte);
 }
-void informationdisplay(void){
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(0, 0);
-    //display.println(sendData);
-    //display.println(inComingbyte);
-    display.print("S: ");
-    display.print(sendSpeed);
-    display.print(" Max: ");
-    display.println(dutyCycleLimit);
-    display.print("R: ");
-    display.print(receivedDutyCycle);
-    display.print(" Max: ");
-    display.println(receivedDutyCycleLimit);
-    /*if(receivedTurn == 'r'){
-      right_count--;
+void informationdisplay(void) {
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  //display.println(sendData);
+  //display.println(inComingbyte);
+  display.print("S: ");
+  display.print(sendSpeed);
+  display.print(" Max: ");
+  display.println(dutyCycleLimit);
+  display.print("R: ");
+  display.print(receivedDutyCycle);
+  display.print(" Max: ");
+  display.println(receivedDutyCycleLimit);
+  display.println(xaxis);
+  display.println(analogRead(YaxisPin));
+
+  /*if(receivedTurn == 'r'){
+    right_count--;
     }
     else if(receivedTurn == 'l'){
-      left_count--;
+    left_count--;
     }
     display.print("right:");
     display.print(right_count);
     display.print(" left:");
     display.println(left_count);
-    */
-    if(receivedTurn == 'r'){
-      display.println("Turn Right");
-    }
-    else if(receivedTurn == 'l'){
-      display.println("Turn Left");
-    }
-    
-    display.display();
-    display.clearDisplay();
+  */
+
+
+  if (receivedTurn == 'r') {
+    display.println("Turn Right");
+  }
+  else if (receivedTurn == 'l') {
+    display.println("Turn Left");
+  }
+
+  display.display();
+  display.clearDisplay();
 }
 
-void getUserInput(){
-  /* This function collects the user input and translates it to 
-   * duty cycle, duty cycle limits, and turn information that will 
-   * then be relayed to the handshak-protocol to be sent out. 
-   */
-  //Note that this is a polling way of doing it, which is find since it's a small code. 
-  button1 = digitalRead(5); 
+void getUserInput() {
+  /* This function collects the user input and translates it to
+     duty cycle, duty cycle limits, and turn information that will
+     then be relayed to the handshak-protocol to be sent out.
+  */
+  //Note that this is a polling way of doing it, which is find since it's a small code.
+  button1 = digitalRead(5);
   button2 = digitalRead(4);
   //button3 = digitalRead(3);
   //button4 = digitalRead(2);
@@ -147,56 +154,56 @@ void getUserInput(){
   userDutyCycle = analogRead(YaxisPin);
   // Duty Cycle Controls
 
-  if(userDutyCycle > dutyCycleLimit) userDutyCycle = dutyCycleLimit;
-  if(userDutyCycle < 0) userDutyCycle = 0;
-  if(button2 == 1) { //stop
-    sendSpeed = 0; 
-    userDutyCycle = 0;  
+  if (userDutyCycle > dutyCycleLimit) userDutyCycle = dutyCycleLimit;
+  if (userDutyCycle < 0) userDutyCycle = 0;
+  if (button2 == 1) { //stop
+    sendSpeed = 0;
+    userDutyCycle = 0;
   }
-  
+
   // Turning Controls
-  if(xaxis > 600){
+  if (xaxis > 600) {
     right_count++;                                      //turn right
-    sendTurn = 'r'; 
+    sendTurn = 'r';
   }
-  else if(xaxis <400){
-    left_count++; 
+  else if (xaxis < 400) {
+    left_count++;
     sendTurn = 'l';                                     //turn left
   }
   else sendTurn = '0';
 
-  dutyCycleLimit = map(resistor,0,1023,0,99);
-  
+  dutyCycleLimit = map(resistor, 0, 1023, 0, 99);
+
   if (button1 == 1) sendSpeed = dutyCycleLimit;
   else sendSpeed = userDutyCycle;
-  
+
   // Need to test if all the buttons are working.... and label them.
- 
+
 }
 
-void handshake(){
-  if(controllerState == 0){                            //sending signal
-    sprintf(sendData,"c%02u%02u%ce",dutyCycleLimit,sendSpeed,sendTurn);
+void handshake() {
+  if (controllerState == 0) {                          //sending signal
+    sprintf(sendData, "c%02u%02u%ce", dutyCycleLimit, sendSpeed, sendTurn);
     Serial.print(sendData);
     controllerState = 1;
     lastReciveTime = millis();
   }
-  if(controllerState == 1){                            //reciving signal
-    while(Serial.available()){
-     Serial.readBytesUntil('e',inComingbyte,7);       //change controllerState if start bit is 'b'
-    if(inComingbyte[0] == 'f'){
-      controllerState = 0;
-      for(int i = 0;i<2;i++){
-        dutyC[i] = inComingbyte[i+1];
-        speedC[i]  = inComingbyte[i+3];
-     }
-     receivedDutyCycleLimit = atoi(dutyC);
-     receivedDutyCycle     = atoi(speedC);
-     receivedTurn      = inComingbyte[5];
+  if (controllerState == 1) {                          //reciving signal
+    while (Serial.available()) {
+      Serial.readBytesUntil('e', inComingbyte, 7);     //change controllerState if start bit is 'b'
+      if (inComingbyte[0] == 'f') {
+        controllerState = 0;
+        for (int i = 0; i < 2; i++) {
+          dutyC[i] = inComingbyte[i + 1];
+          speedC[i]  = inComingbyte[i + 3];
+        }
+        receivedDutyCycleLimit = atoi(dutyC);
+        receivedDutyCycle     = atoi(speedC);
+        receivedTurn      = inComingbyte[5];
+      }
+      //Serial.read();
     }
-    //Serial.read();
-   }
-    if(millis() - lastReciveTime > 200){                //send again if waiting time exceeds 200ms
+    if (millis() - lastReciveTime > 200) {              //send again if waiting time exceeds 200ms
       controllerState = 0;
     }
   }
