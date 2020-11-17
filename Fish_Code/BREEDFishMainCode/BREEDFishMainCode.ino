@@ -20,12 +20,13 @@ int turnVal=0; //Stores commmand value for control left and right. values 1-4 ar
 int encoderVal=0; //stores value of encoder at any given time. Updates from interrupt.
 int power=0; //Stores power value from controller
 long int tailTimer1=millis();
-long int tailDelay1=2000;
+long int tailDelay1=500;
 //long int tailTimer2=millis();
 //long int tailDelay2=2000;
 int encoderPin0   =  29;
 int offset=0;
 float turningDiff=0.5;
+int prevPower=0;
 
 void setup() {
  // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
@@ -95,16 +96,24 @@ void loop() {
     }*/
      
     timer1 = millis();
-    if ((millis()-tailTimer1)%4000>tailDelay1){
+    
+    if (prevPower!=power){
       motor_Pwm = map(power, 0,9,0,255);
+      prevPower=power;
+      analogWrite (pwm_Pin, motor_Pwm);
     }
+    
+    //if ((millis()-tailTimer1)4000>tailDelay1){
+      //motor_Pwm = map(power, 0,9,0,255);
+    //}
   }
   
   encoder();
   
   //Kill switch
   if (millis() - timer1 > 3000) {
-    motor_Pwm = 0; 
+    motor_Pwm = 0;
+    analogWrite (pwm_Pin, motor_Pwm); 
   }
   else{
   //{
@@ -143,7 +152,7 @@ void loop() {
     }
   
   }
-  analogWrite (pwm_Pin, motor_Pwm);
+  //analogWrite (pwm_Pin, motor_Pwm);
   Serial.print("motor pwm:                    ");
   Serial.println(motor_Pwm);
   //delay(500);
