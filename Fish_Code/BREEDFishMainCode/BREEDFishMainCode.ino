@@ -102,7 +102,8 @@ void loop() {
       prevPower=power;
       analogWrite (pwm_Pin, motor_Pwm);
     }
-    
+    //motor_Pwm = map(power, 0,9,0,255);
+    //analogWrite (pwm_Pin, motor_Pwm);
     //if ((millis()-tailTimer1)4000>tailDelay1){
       //motor_Pwm = map(power, 0,9,0,255);
     //}
