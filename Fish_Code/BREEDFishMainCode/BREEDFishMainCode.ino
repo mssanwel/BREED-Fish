@@ -25,7 +25,7 @@ long int tailDelay1=500;
 //long int tailDelay2=2000;
 int encoderPin0   =  29;
 int offset=0;
-float turningDiff=0.5;
+float turningDiff=0.1;
 int prevPower=0;
 
 void setup() {
