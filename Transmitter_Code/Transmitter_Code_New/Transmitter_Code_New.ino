@@ -6,7 +6,7 @@
  * 
  * Currently setup to send a signal every 30ms (10Hz) 
  * Human Reaction time is 300ms, this is well below it. 
- */
+ */ 
 
 int potPinpower = A0;
 int potPinturn = A4;
