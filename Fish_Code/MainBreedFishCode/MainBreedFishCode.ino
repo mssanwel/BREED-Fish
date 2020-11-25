@@ -20,10 +20,14 @@ int turnVal=0; //Stores commmand value for control left and right. values 1-4 ar
 int encoderVal=0; //stores value of encoder at any given time. Updates from interrupt.
 int power=0; //Stores power value from controller
 long int tailTimer1=millis();
-long int tailDelay1=2000;
+long int tailDelay1=500;
 //long int tailTimer2=millis();
 //long int tailDelay2=2000;
 int encoderPin0   =  29;
+int offset=0;
+float turningDiff=0.1;
+int prevPower=0;
+
 void setup() {
  // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
  // The RC is defined as 8 bits, Odd parity, 1 check digit. Default Arduino setting is SERIAL_8N1, where N means no parity.
@@ -59,6 +63,11 @@ void setup() {
 
   //power = 8;//myStr - '0' ; // This line
   //turnVal=4;
+  encoder();
+  delay(1000);
+  //offset=encoderVal;
+  Serial.print("Offset= ");
+  Serial.println(offset);
 }
 
 void loop() {
@@ -75,32 +84,52 @@ void loop() {
     }
     if (myStr>='0' and myStr<='9')
       power = myStr - '0' ; // This line
+
+
+    //turnDiff
+    /*if (turnVal != 5){
+      turningDiff = map((turnVal%5), 1,4,5,1);
+      Serial.print("Differntial:                                  ");
+      turningDiff=turningDiff/10;
+      Serial.println(turningDiff);
+    
+    }*/
      
     timer1 = millis();
-    if ((millis()-tailTimer1)%4000>tailDelay1){
+    
+    if (prevPower!=power){
       motor_Pwm = map(power, 0,9,0,255);
+      prevPower=power;
+      analogWrite (pwm_Pin, motor_Pwm);
     }
+    //motor_Pwm = map(power, 0,9,0,255);
+    //analogWrite (pwm_Pin, motor_Pwm);
+    //if ((millis()-tailTimer1)4000>tailDelay1){
+      //motor_Pwm = map(power, 0,9,0,255);
+    //}
   }
   
   encoder();
   
   //Kill switch
   if (millis() - timer1 > 3000) {
-    motor_Pwm = 0; 
+    motor_Pwm = 0;
+    analogWrite (pwm_Pin, motor_Pwm); 
   }
   else{
   //{
     // Turning control Left
     if ((turnVal>=1) and (turnVal<=4)){
       Serial.println("Turning Left");
-      if ((encoderVal>=206) and (encoderVal<=306)){
-        if ((millis()-tailTimer1)%4000<tailDelay1){
-            motor_Pwm = map(power, 0,9,0,255)*0;
-        }
-        else{
-          motor_Pwm = map(power, 0,9,0,255);
-        }
+      if ((abs(encoderVal-offset)<=359) or (abs(encoderVal-offset)>=871)){
+        //if ((millis()-tailTimer1)%4000<tailDelay1){
+            motor_Pwm = map(power, 0,9,0,255)*turningDiff;
+        //}
       }
+      else{
+        motor_Pwm = map(power, 0,9,0,255);
+      }
+      //}
     }
     
     // Going Straight
@@ -109,22 +138,23 @@ void loop() {
       motor_Pwm = map(power, 0,9,0,255); //maps the value received (0-9) to (0-255)
     }
     
-    // Turning control Left
+    // Turning control Right
     else if ((turnVal>=6) and (turnVal<=9)){
       Serial.println("Turning Right");
-      if ((encoderVal>=718) and (encoderVal<=818)){
-        if ((millis()-tailTimer1)%4000<tailDelay1){
-            motor_Pwm = map(power, 0,9,0,255)*0;
-        }
-        else{
-          motor_Pwm = map(power, 0,9,0,255);
-        }
-      } 
+      if ((abs(encoderVal-offset)<=870) and (abs(encoderVal-offset)>=364)){
+        //if ((millis()-tailTimer1)%4000<tailDelay1){
+        motor_Pwm = map(power, 0,9,0,255)*turningDiff;
+        //}
+      }
+      else{
+        motor_Pwm = map(power, 0,9,0,255);
+      }
+      //} 
     }
   
   }
-  analogWrite (pwm_Pin, motor_Pwm);
-  Serial.print("motor pwm: ");
+  //analogWrite (pwm_Pin, motor_Pwm);
+  Serial.print("motor pwm:                    ");
   Serial.println(motor_Pwm);
   //delay(500);
 }
@@ -151,7 +181,7 @@ void encoder() {
   }
   float encoderValueRaw = 512.0*b[9]+256.0*b[8]+128.0*b[7]+64.0*b[6]+32.0*b[5]+16.0*b[4]+8.0*b[3]+4.0*b[2]+2.0*b[1]+b[0];
   Serial.print("encodervalue : ");
-  Serial.println(encoderValueRaw);
+  Serial.println(abs(encoderValueRaw-offset));
   
   //float angularV;
   //angularVelocity[0]= angularVelocity[1];
