@@ -1,5 +1,5 @@
 //Arduino Pin Declarations
-unsigned int pwm_Pin = 10;//10;
+unsigned int pwm_Pin = 9;//9;
 unsigned int motor_Pwm = 0;
 
 bool red_Flag = LOW;
@@ -24,9 +24,9 @@ long int tailDelay1=500;
 //long int tailTimer2=millis();
 //long int tailDelay2=2000;
 int encoderPin0   =  29;
-int offset=0;
-float turningDiff=0.1;
-int prevPower=0;
+int offset=627;
+float turningDiff=0.3;
+int prevPower=-1;
 
 void setup() {
  // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
@@ -61,13 +61,12 @@ void setup() {
   Serial.println("Encoder Pins Initialized!");
   Serial.println("Setup is complete! Click to begin the program....");
 
-  //power = 8;//myStr - '0' ; // This line
-  //turnVal=4;
   encoder();
-  delay(1000);
   //offset=encoderVal;
   Serial.print("Offset= ");
   Serial.println(offset);
+  turnVal=5;
+  power=0;
 }
 
 void loop() {
@@ -76,38 +75,57 @@ void loop() {
   if(Serial1.available() ){
     myStr = Serial1.read(); //receives a signal from 0-9
     //Add code to seperate myStr to appropriate sections and store in variaibles below
+    Serial.print("Recieved:                          => ");
     Serial.println(myStr); 
     // Converts the character into an integer
 
     if (myStr>='A' and myStr<='I'){
-      turnVal=myStr-'A'+1; // and this line
+      turnVal= myStr - 'A'+1; // and this line
     }
-    if (myStr>='0' and myStr<='9')
+    if (myStr>='0' and myStr<='9'){
       power = myStr - '0' ; // This line
+    }
 
-
-    //turnDiff
-    /*if (turnVal != 5){
+    /*//turnDiff
+    if (turnVal != 5){
       turningDiff = map((turnVal%5), 1,4,5,1);
       Serial.print("Differntial:                                  ");
       turningDiff=turningDiff/10;
       Serial.println(turningDiff);
     
     }*/
-     
+    //serialFlush();
     timer1 = millis();
+
+    //turnVal=;
+    //power=9;
+
     
-    if (prevPower!=power){
-      motor_Pwm = map(power, 0,9,0,255);
-      prevPower=power;
-      analogWrite (pwm_Pin, motor_Pwm);
-    }
-    //motor_Pwm = map(power, 0,9,0,255);
-    //analogWrite (pwm_Pin, motor_Pwm);
-    //if ((millis()-tailTimer1)4000>tailDelay1){
-      //motor_Pwm = map(power, 0,9,0,255);
+    //if (power==9){
+      //prevPower=power;
+      //analogWrite(pwm_Pin, 254);
+      //power=0;
     //}
+    
+    /*if (prevPower!=power){
+      prevPower=power;
+      analogWrite(pwm_Pin, 254);
+      //Serial.print("");
+      Serial.println("                              Power updated");
+    }*/
+    //motor_Pwm = map(power, 0,9,0,255);
+    
+    /*if ((millis()-tailTimer1)>100){
+      tailTimer1 = millis();
+      motor_Pwm = map(power, 0,9,0,255);
+      //Serial.print("");
+      Serial.println("                              Power updated");
+    }*/
   }
+
+  //turnVal=5;
+  //power=9;
+  
   
   encoder();
   
@@ -115,52 +133,55 @@ void loop() {
   if (millis() - timer1 > 3000) {
     motor_Pwm = 0;
     analogWrite (pwm_Pin, motor_Pwm); 
+    power=9;
   }
   else{
-  //{
     // Turning control Left
     if ((turnVal>=1) and (turnVal<=4)){
-      Serial.println("Turning Left");
-      if ((abs(encoderVal-offset)<=359) or (abs(encoderVal-offset)>=871)){
-        //if ((millis()-tailTimer1)%4000<tailDelay1){
-            motor_Pwm = map(power, 0,9,0,255)*turningDiff;
-        //}
+      Serial.println("                                         Turning Left");
+      if ((abs(encoderVal-offset)<=255) or (abs(encoderVal-offset)>= 756)){
+            motor_Pwm = map(power, 0,9,0, 255)*turningDiff;
       }
       else{
-        motor_Pwm = map(power, 0,9,0,255);
+        motor_Pwm = map(power, 0,9,0, 255);
       }
       //}
     }
     
     // Going Straight
     else if (turnVal==5){
-      Serial.println("Going straight");
+      Serial.println("                                         Going straight");
       motor_Pwm = map(power, 0,9,0,255); //maps the value received (0-9) to (0-255)
     }
     
     // Turning control Right
     else if ((turnVal>=6) and (turnVal<=9)){
-      Serial.println("Turning Right");
-      if ((abs(encoderVal-offset)<=870) and (abs(encoderVal-offset)>=364)){
-        //if ((millis()-tailTimer1)%4000<tailDelay1){
-        motor_Pwm = map(power, 0,9,0,255)*turningDiff;
-        //}
+      Serial.println("                                         Turning Right");
+      if ((abs(encoderVal-offset)<=255) or (abs(encoderVal-offset)>=756)){
+        motor_Pwm = map(power, 0,9,0, 255)*turningDiff;
       }
       else{
-        motor_Pwm = map(power, 0,9,0,255);
+        motor_Pwm = map(power, 0,9,0, 255);
       }
-      //} 
+      
     }
   
   }
-  //analogWrite (pwm_Pin, motor_Pwm);
+  //Removing analog write from being executed in each loop
+  
+  analogWrite (pwm_Pin, motor_Pwm);
   Serial.print("motor pwm:                    ");
   Serial.println(motor_Pwm);
+  //analogWrite(pwm_Pin, 254);
   //delay(500);
 }
 
 
-
+void serialFlush(){
+  while(Serial.available() > 0) {
+    char t = Serial.read();
+  }
+}   
 
 
 
@@ -183,31 +204,6 @@ void encoder() {
   Serial.print("encodervalue : ");
   Serial.println(abs(encoderValueRaw-offset));
   
-  //float angularV;
-  //angularVelocity[0]= angularVelocity[1];
-  //angularVelocity[1] = angularVelocity[2];
-  //angularVelocity[2] = encoderValueRaw;
-    
-  //if(runtime != 0){
-  //  angularV = (angularVelocity[2] - angularVelocity[0])*2*PI/(2*runtime*1024/1000/1000);  //gives the angular velocity in rad/s.
-  //}
-  //Serial.print(angularV);
-  //Serial.print("\t");
-  //Serial.println(encoderValueRaw-600);
-  
-  //if((counter%10) == 0 ) analogWrite(5, encoderValueRaw*255/1024);
-  //if(counter == 1000){
-    //runtime = (micros() - timer)/1000;
-    //Serial.print("the average time for the loop is ");
-    //Serial.print(runtime);
-    //Serial.println(" microseconds");
-    
-    //counter = 0;  //reset the counter
-    //timer = micros();  //reset the timer base
-  //}
-  //counter++;
-  //encoderCounter++;
-  //delay(500);
   
   encoderVal= encoderValueRaw;
 }

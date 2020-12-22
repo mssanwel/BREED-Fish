@@ -1,12 +1,3 @@
-#include <Adafruit_SSD1331.h>
-#include <Adafruit_SSD1306.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_SPITFT.h>
-#include <Adafruit_SPITFT_Macros.h>
-#include <gfxfont.h>
-#include <SPI.h>
-#include <Wire.h>
-
 /*
  * Simple Transmitter Code 
  * 
@@ -17,19 +8,8 @@
  * Human Reaction time is 300ms, this is well below it. 
  */ 
 
-#define OLED_RESET -1 //(-1 because sharing arduino reset pin)
-Adafruit_SSD1306 display(OLED_RESET);
-
-#define LOGO16_GLCD_HEIGHT 16
-#define LOGO16_GLCD_WIDTH  16
-
-#if (SSD1306_LCDHEIGHT != 32)
-#error("Height incorrect, please fix Adafruit_SSD1306.h!");
-#endif
-
-
 int potPinpower = A0;
-int potPinturn = A2;
+int potPinturn = A4;
 int potSweep = 0;
 
 long timer1 = 0;
@@ -72,9 +52,6 @@ void setup() {
   //pinMode( b3, INPUT); //right button
   //pinMode( b4, INPUT); //left button
   Serial.begin(9600, SERIAL_8O1);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x32)
-  display.display();
-  display.clearDisplay();
 }
 
 void loop() {
@@ -136,11 +113,9 @@ void loop() {
       Serial.print(turn);
       Serial.print("   ");
       */
-      command[0] = power + '0';
-      command[1] = finalturn + 'A';    //convert turn to ASCII to avoid conflict from 65- 74
+      command[0] = 5 + '0';
+      command[1] = 7 + 'A';    //convert turn to ASCII to avoid conflict from 65- 74
       Serial.print(command); //Ensures that it doesn't overwhelm the system and to give time for the RC to transmit. 
-      //print values on OLED
-      informationdisplay();
     }
   }
   // Stops the transmission after 60 iterations 60*250ms 
@@ -156,27 +131,5 @@ void loop() {
     flag1 = HIGH;
     counter1 = 0;
   }
-}
-
-void informationdisplay(void) {
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0, 0);
-  display.print("Power:   ");
-  display.println(command[0]);
-  display.print("Turn:   ");
-  display.println(command[1]);
-
   
-  if (command[1] - 'A' < 5) {
-    display.println("Turning Left");
-  }
-  else if (command[1] - 'A' > 5) {
-    display.println("Turning Right");
-  }
-  else if (command[1] - 'A' == 5) {
-    display.println("Going Straight");
-  }
-  display.display();  //call method for new changes
-  display.clearDisplay();  //remove old changes
 }
