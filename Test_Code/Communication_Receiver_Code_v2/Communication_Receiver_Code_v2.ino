@@ -1,59 +1,26 @@
-/*
- * Basic code written to test the basic functionality of 
- * (i)  Radio Control Modules (Serial based)
- * (ii) Simple PWM control of a motor
+  /*
+ * Basic code written to test the basic functionality of Radio Control Modules (Serial based)
+ * Allows us to check whether the hardware is working correctly
  * 
- * This is on the receiver side, which, upon receipt of a signal will control the motor
+ * This is on the receiver side, which receives a signal and displays on the Serial monitor
  * Receiver should be an Arduino Mega, as they have multiple Serial ports.
- * Written by Timothy Ng 15/10/2020
+ * The signal can be read as a char, int or String but use readString or read to read String or a char respectively.
+ * Written by Saad Shahid and Taha Abid 1st March 2021
  * 
  */
-
-
-//Arduino Pin Declarations
-unsigned int pwm_Pin = 10;
-unsigned int motor_Pwm = 0;
-
-bool red_Flag = LOW;
-bool on = LOW;
-unsigned long int timer1 = 0;
-unsigned long int timer2 = 0;
-
-//Radio Signal 
-char myStr = '0';
-
+#include <SD.h>
+#include <Servo.h>
+#include <SPI.h>
+#include <Wire.h>
 void setup() {
- // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
- // The RC is defined as 8 bits, Odd parity, 1 check digit. Default Arduino setting is SERIAL_8N1, where N means no parity.
- Serial1.begin(9600,SERIAL_8O1);
- Serial.begin(9600);
-
- // Set the PWM frequency of Timer 2 to be 3kHz
- TCCR2B = TCCR2B & 0b11111000 | 0x01;
-
- //Define the output pins
- pinMode(pwm_Pin, OUTPUT);
+  Serial.begin(9600);
+  Serial1.begin(9600);
 }
-
 void loop() {
-
-//Checks if there is any information in the Serial Buffer
-  
-  if(Serial1.available() ){
-    myStr = Serial1.read(); //receives a signal from 0-9
-    Serial.println(myStr); 
-    int x = myStr - '0' ;   // Converts the character into an integer
-    motor_Pwm = map(x, 0,9,0,255); //maps the value received (0-9) to (0-255)
-    timer1 = millis();
+  //Serial.println(“Running”);
+  if (Serial1.available() > 0) {
+      String Data=Serial1.readString();
+      Serial.println(Data);
+      Serial.println(“recieved”);
   }
-
-  if (millis() - timer1 > 3000) {
-    Serial.print("Motor Killed");
-    motor_Pwm = 0; 
-  }
-
-  
-  analogWrite (pwm_Pin, motor_Pwm);
-  //Serial.println(motor_Pwm);
-  
 }
