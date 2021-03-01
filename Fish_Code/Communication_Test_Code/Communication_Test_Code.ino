@@ -3,8 +3,8 @@
     *  
     *  Receives instructions from transmitter for turning and power values for the fish tail
     *  
-    *  Created 1 Mar 2021
-    *  By Allison, Brianna, Heidi
+    *  Modified 1 Mar 2021
+    *  Modified by Allison, Brianna, Heidi
     *  
 */
 
@@ -167,6 +167,7 @@ void loop() {
       Serial.println(motor_Pwm);
       oldTurnVal = turnVal;
       oldPower = power;
+      timer1 = millis();
       }
     }
   }
