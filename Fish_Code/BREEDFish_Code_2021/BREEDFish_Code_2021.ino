@@ -75,7 +75,6 @@ void setup() {
   encoder();      //reads the offset value
   delay(1000);
   offset=encoderVal;
-  oldEncoderVal = encoderVal;
   Serial.print("Offset= ");
   Serial.println(offset);
 }
