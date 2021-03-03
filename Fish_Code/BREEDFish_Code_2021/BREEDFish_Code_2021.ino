@@ -3,20 +3,17 @@
     *  
     *  Receives instructions from transmitter for turning and power values for the fish tail
     *  
-    *  Created 1 Mar 2021
-    *  By Allison, Brianna, Heidi
+    *  Modified 1 Mar 2021
+    *  Modified by Allison, Brianna, Heidi
     *  
 */
-
 //Arduino Pin Declarations
 unsigned int pwm_Pin = 9;//10;
 unsigned int motor_Pwm = 0;
-
 bool red_Flag = LOW;
 bool on = LOW;
 unsigned long int timer1 = 0;
 unsigned long int timer2 = 0;
-
 long int counter =0;
 long int runtime = 0;
 long int timer = 0;
@@ -33,25 +30,20 @@ long int tailDelay1=2000;
 int encoderPin0   =  29;
 double diff = 1.0;      //to store the differential value corresponding to the signal
 double stepDiff = 0.1;  //sets the differential value
-
 int highcutoff, lowcutoff, offset,num;
-
 void setup() {
  // Define the Serial ports, with Serial1 as the Receiver Port for Data from the transmitter. 
  // The RC is defined as 8 bits, Odd parity, 1 check digit. Default Arduino setting is SERIAL_8N1, where N means no parity.
  
  // Set the PWM frequency of Timer 2 to be 3kHz
  TCCR2B = TCCR2B & 0b11111000 | 0x01;
-
  //Define the output pins
  pinMode(pwm_Pin, OUTPUT);
  pinMode(13, OUTPUT);
-
   Serial1.begin(9600,SERIAL_8O1);
   Serial.begin(9600);
   //Serial.begin(115200);
   //Serial.println("Serial Port Initialized!");
-
  
   for(int encoderPin = encoderPin0; encoderPin <= 47;encoderPin = encoderPin + 2){   //absolute encoder pin setup
     pinMode(encoderPin,INPUT_PULLUP);
@@ -61,17 +53,14 @@ void setup() {
   while(!Serial.read());
   timer = micros();
   
-
   Serial.println("Encoder Pins Initialized!");
   Serial.println("Setup is complete! Click to begin the program....");
-
   encoder();      //reads the offset value
   delay(1000);
   offset=encoderVal;
   Serial.print("Offset= ");
   Serial.println(offset);
 }
-
 void loop() {
     
   char incomingByte;
@@ -167,12 +156,11 @@ void loop() {
       Serial.println(motor_Pwm);
       oldTurnVal = turnVal;
       oldPower = power;
+      timer1 = millis();
       }
     }
   }
 }
-
-
 void encoder() {
   // returns the position of the shaft (0-1023)
   // put your main code here, to run repeatedly:
@@ -190,7 +178,6 @@ void encoder() {
   Serial.println(encoderValueRaw);
   encoderVal= encoderValueRaw;
 }
-
 //checkSum function
 bool checkSum(char cmd[]){
   //checks whether the input is a valid signal
@@ -209,3 +196,4 @@ bool checkSum(char cmd[]){
     return false;   //if signal is CORRUPTED
   }
 }
+Collapse

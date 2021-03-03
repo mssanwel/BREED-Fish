@@ -1,11 +1,11 @@
-/*
- * Simple Transmitter Code 
+  /*
+ * Basic code written to test the basic functionality of Radio Control Modules (Serial based)
+ * Allows us to check whether the hardware is working correctly
  * 
- * Receives a value from the potentiometer connected at A0 on the Arduino Uno, and transmit the information to 
- * the Receiver. 
+ * This is on the transmitter side, which transmits a signal
+ * Strings or char arrays both can be sent using serial.print or serial.write
+ * Written by Saad Shahid and Taha Abid 1st March 2021
  * 
- * Currently setup to send a signal every 30ms (10Hz) 
- * Human Reaction time is 300ms, this is well below it. 
  */
 
 char testval[] = {'a','b','c'};
@@ -23,7 +23,7 @@ void loop() {
   if(millis() - timer1 > 200){
     timer1 = millis();
 //    if(Serial.availableForWrite() > 30) {
-      Serial1.print(testval2);
+      Serial1.(testval2);
       Serial.print(testval2); 
 //    }
   }
