@@ -4,8 +4,8 @@
 #include <Wire.h>
 Servo servo1;
 Servo servo2;
-int servoPin1 = 3;
-int servoPin2 = 2;
+int servoPin1 = 5;
+int servoPin2 = 3;
 String letter;
 int num=100;
 int s1, s2;
