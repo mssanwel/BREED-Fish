@@ -68,11 +68,10 @@ void loop() {
         s1=map(num,mid_range + 2, max_range, mid_angle, max_angle);
         s2=map(num, mid_range + 2, max_range, mid_angle, min_angle);
       }
-      
-//      else if (num>=4 and num<=5){ //no movement
-//        s1=90;
-//        s2=90;
-//      }
+      else if (num>=4 and num<=5){ //no movement
+        s1=90;
+        s2=90;
+      }
     }
     
     if (letter=="U") { //for moving the fins up and down (servo motors turn in same directions)
@@ -85,10 +84,10 @@ void loop() {
         s2=map(num,mid_range+2,max_range,mid_angle,max_angle);
       }
       
-//      else if (num>=4 and num<=5){ //no movement
-//        s1=90;
-//        s2=90;
-//      }
+      else if (num>=4 and num<=5){ //no movement
+       s1=90;
+       s2=90;
+      }
     }
     //print out coordinates/angles of servo motors
     Serial.print("\n");
