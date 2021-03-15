@@ -38,7 +38,7 @@ void loop() {
     Serial.print("I'm receiving: ");
     // read the incoming byte:
     incomingByte = Serial1.read();
-    while (incomingByte != '?') {  //read char by char until we know the signal is completely read indicated by the identifier '?'
+    while (incomingByte != '?') {  //read char by char until we know the end of signal is reahced indicated by the identifier '?'
       cmd[siglen] = incomingByte;
       Serial.print(incomingByte);
       siglen++;
