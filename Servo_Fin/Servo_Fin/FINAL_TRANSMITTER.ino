@@ -22,11 +22,11 @@ void loop() {
     yMap = map(sensorValueY, 0, 1023, 0, 9);
     ascii_sumX = 84 + (xMap + '0');
     ascii_sumY = 85 + (yMap + '0');
-    xstr = "T" + String(xMap) + String(ascii_sumX) + "?" ;
+    xstr = "R" + String(xMap) + String(ascii_sumX) + "?" ;
     ystr = "U" + String(yMap) + String(ascii_sumY) + "?";
     strcpy(signal1, xstr.c_str());
     strcpy(signal2, ystr.c_str());
-    if ((xMap>5 || xMap<4) && yMap<=5 && yMap>=4) { //if T is greater than 5 or less than 4 and U value is 4-5, only T signal is sent
+    if ((xMap>5 || xMap<4) && yMap<=5 && yMap>=4) { //if R is greater than 5 or less than 4 and U value is 4-5, only T signal is sent
           Serial1.write(signal1);
           Serial.println("Left-right signal:");
           Serial.println(signal1);
