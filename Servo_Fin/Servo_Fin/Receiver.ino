@@ -52,14 +52,14 @@ void loop() {
       for(int i = 0; i < 2; i++) {
         Serial.print(cmd[i]);
       }
-    //array[0] is 'T' or 'U' - convert to string, array[1:] are the numbers - convert to integer
+    //array[0] is 'R' or 'U' - convert to string, array[1:] are the numbers - convert to integer
     String w = String(cmd);
     String letter = String(w[0]);
     num = String(w.substring(1,2)).toInt();
     Serial.println();
     Serial.print("The number for movement is: ");
     Serial.println(num);
-    if (letter=="T") { //for turning the fins left and right (servo motors turn in opposite directions)
+    if (letter=="R") { //for turning the fins left and right (servo motors turn in opposite directions)
       if (num>=min_range && num<mid_range) {
         s1=map(num,min_range, mid_range -1, min_angle, mid_angle); //left
         s2=map(num,min_range, mid_range -1,max_angle, mid_angle);
