@@ -36,7 +36,7 @@ void loop() {
     ascii_sumX = 'R' + (xMap + '0');
     ascii_sumY = 'U' + (yMap + '0');
     ascii_sumT = 'T' + (tMap + '0');
-    xstr = "R" + String(xMap) + String(ascii_sumX) + "?" ;
+    xstr = "R" + String(xMap) + String(ascii_sumX) + "?";
     ystr = "U" + String(yMap) + String(ascii_sumY) + "?";
     tstr = "T" + String(tMap) + String(ascii_sumT) + "?";    
     strcpy(signal1, xstr.c_str());
