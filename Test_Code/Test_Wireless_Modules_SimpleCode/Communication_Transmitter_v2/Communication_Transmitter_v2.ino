@@ -13,7 +13,7 @@ String testval2 = "abcdef";
 int timer1 = 0;
 void setup() {
   // put your setup code here, to run once:
-  Serial1.begin(9600, SERIAL_8O1);
+  Serial1.begin(9600);
   Serial.begin(9600);
   pinMode(INPUT, 7);
 }
@@ -23,7 +23,7 @@ void loop() {
   if(millis() - timer1 > 200){
     timer1 = millis();
 //    if(Serial.availableForWrite() > 30) {
-      Serial1.(testval2);
+      Serial1.print(testval2);
       Serial.print(testval2); 
 //    }
   }
