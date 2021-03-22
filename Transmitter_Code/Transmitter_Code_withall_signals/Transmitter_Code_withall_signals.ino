@@ -1,5 +1,5 @@
-int sensorValueX = analogRead(A2);
-int sensorValueY = analogRead(A3);
+int sensorValueX = analogRead(A0);
+int sensorValueY = analogRead(A1);
 int ascii_sumX, ascii_sumY, ascii_sumT;
 int xMap, yMap; 
 int tMap = 5;
@@ -17,12 +17,17 @@ void setup() {
   pinMode(sensorValueY, INPUT);
   pinMode(leftbutton,INPUT_PULLUP);
   pinMode(rightbutton,INPUT_PULLUP);
+  while (!Serial1){
+    Serial.println("loading...");
+      
+    }
+
 }
 void loop() {
   if (millis() - timer1 > 200) {
     timer1=millis();
-    sensorValueX = analogRead(A2);
-    sensorValueY = analogRead(A3);
+    sensorValueX = analogRead(A0);
+    sensorValueY = analogRead(A1);
     xMap = map(sensorValueX, 0, 1023, 0, 9);
     yMap = map(sensorValueY, 0, 1023, 0, 9);
     if((digitalRead(leftbutton) == LOW) && tMap > 0) {
@@ -57,7 +62,7 @@ void loop() {
           Serial.println("Original position signal:");
           Serial.println(signal1);
     }
-    if (millis() - timer2 > 400){
+    if (millis() - timer2 > 1500){
       timer2 = millis();
       Serial1.write(signal3);
       Serial.print("Turn value: ");
