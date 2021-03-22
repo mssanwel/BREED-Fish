@@ -29,11 +29,6 @@ void setup() {
   servo2.write(initial2);
   servo1.attach(servoPin1);
   servo2.attach(servoPin2);
-  //once comes out = ready for loop code
-  while (!Serial1){
-    Serial.println("Loading...");
-  }
-  Serial.println("I'm ready for the code!");
 }
 void loop() {
   char incomingByte;
@@ -57,8 +52,6 @@ void loop() {
       for(int i = 0; i < 2; i++) {
         Serial.print(cmd[i]);
       }
-  
-   
     //array[0] is 'R' or 'U' - convert to string, array[1:] are the numbers - convert to integer
     String w = String(cmd);
     String letter = String(w[0]);
@@ -108,11 +101,8 @@ void loop() {
     //motors turn according to signal and go back to original position
     servo1.write(s1);
     servo2.write(s2);
-  }
-   else{
-    Serial.println("Rejected!");
-   }
+   
     delay(20);
-  
+  }
   }
 }
