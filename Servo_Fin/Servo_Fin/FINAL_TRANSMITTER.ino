@@ -1,18 +1,18 @@
 /*
  * Fish encoder + servo fins (transmitter code)
- * 
- * Transmits 4 signals: 
+ *
+ * Transmits 4 signals:
  *      servo: up-down, left-right
  *      tail: turnValue, power
- *      
+ *
  * Edited by: Tasnia, Brianna, Heidi, Allison
- * 
+ *
  */
 
 int sensorValueX = analogRead(A0);    //declare Funduino joystick
 int sensorValueY = analogRead(A1);
 int ascii_sumX, ascii_sumY, ascii_sumT, ascii_sumP;     //checkSum values
-int xMap, yMap; 
+int xMap, yMap;
 int tMap = 5;         //mapped values of turnVal
 int pMap = 5;         //mapped values of power
 String xstr, ystr, pstr, tstr;
@@ -48,7 +48,7 @@ void loop() {
     sensorValueY = analogRead(A1);
     xMap = map(sensorValueX, 0, 1023, 0, 9);
     yMap = map(sensorValueY, 0, 1023, 0, 9);
-    
+
     if((digitalRead(leftbutton) == LOW) && tMap > 1) {
       if (millis()-timer3 > bounceDelay){
         tMap--;
@@ -63,7 +63,7 @@ void loop() {
         timer3 = millis();
       }
     }
-    
+
     if((digitalRead(downbutton) == LOW) && pMap > 0) {
       if (millis()-timer4 > bounceDelay){
         pMap--;
@@ -78,15 +78,15 @@ void loop() {
         timer4 = millis();
       }
     }
-    
+
     ascii_sumX = 'R' + (xMap + '0');      //checkSum values
     ascii_sumY = 'U' + (yMap + '0');
     ascii_sumT = 'T' + (tMap + '0');
     ascii_sumP = 'P' + (pMap + '0');
     xstr = "R" + String(xMap) + String(ascii_sumX) + "?";
     ystr = "U" + String(yMap) + String(ascii_sumY) + "?";
-    tstr = "T" + String(tMap) + String(ascii_sumT) + "?";    
-    pstr = "P" + String(pMap) + String(ascii_sumP) + "?"; 
+    tstr = "T" + String(tMap) + String(ascii_sumT) + "?";
+    pstr = "P" + String(pMap) + String(ascii_sumP) + "?";
     strcpy(signal1, xstr.c_str());
     strcpy(signal2, ystr.c_str());
     strcpy(signal3, tstr.c_str());
