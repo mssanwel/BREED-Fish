@@ -104,6 +104,7 @@ void loop() {
   int siglen = 0;  //to store the length of the incoming signal
   char cmd[11];
   if (Serial1.available() > 0) {  //if more than 2 bytes available to read in the buffer
+    tailTimer1=millis();
     Serial.print("I'm receiving: ");
     // read the incoming byte:
     incomingByte = Serial1.read();
@@ -160,7 +161,7 @@ void loop() {
           s2 = 90;
         }
       }
-      killswitch();
+
       encoder();    //reads the current position of the shaft
       if ((offset + 512) >1023){
        lowcutoff = offset+512-1023;
@@ -206,6 +207,7 @@ void loop() {
         }
       }
       //print out encoder output and power
+      killswitch();
       analogWrite (pwm_Pin, motor_Pwm);
       Serial.print("motor pwm: ");
       Serial.println(motor_Pwm);
