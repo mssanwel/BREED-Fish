@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 import serial
 GPIO.setmode(GPIO.BOARD)
+GPIO.cleanup()
 
 def SetAngle(angle1,angle2):
     print("Angle1", angle1)
@@ -16,7 +17,7 @@ def SetAngle(angle1,angle2):
     GPIO.output(servoPin2, True)
     pwm1.ChangeDutyCycle(duty1)
     pwm2.ChangeDutyCycle(duty2)
-    sleep(0.1)
+    sleep(1)
     GPIO.output(servoPin1, False)
     GPIO.output(servoPin2, False)
     pwm1.ChangeDutyCycle(0)
@@ -137,7 +138,7 @@ if __name__ == '__main__':
     ser.flush
     sense = SenseHat()
     servoPin1=26
-    servoPin2=16
+    servoPin2=24
     GPIO.setup(servoPin1, GPIO.OUT)
     GPIO.setup(servoPin2, GPIO.OUT)
     pwm1=GPIO.PWM(servoPin1, 50)
@@ -146,7 +147,7 @@ if __name__ == '__main__':
     pwm2.start(0)
 
 	
-
+    #sleep(3)
     cmd=None
     while True:
         if ser.in_waiting > 0:
@@ -157,7 +158,7 @@ if __name__ == '__main__':
 		cmd=parse[1]
 		numR=int(cmd[1])
 		numU=int(cmd[3])
-		write_to_servo(numR, numU)
+		#write_to_servo(numR, numU)
 	
 		#print(parse[1][1])
 		#print(parse[1][2])
@@ -174,7 +175,7 @@ if __name__ == '__main__':
 	#sleep(1)
 	#print("x={0}, y={1}, z={2}".format(x, y, z))
 	
-	#SetAngle(int(50-x*50), int(50+x*50))
+	SetAngle(int(50-x*50), int(50+x*50))
 	
 
 
